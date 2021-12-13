@@ -37,13 +37,6 @@
 
 #include "structmember.h"
 
-/* Require SDL_ttf 2.0.6 or later for rwops support */
-#ifdef TTF_MAJOR_VERSION
-#define FONT_HAVE_RWOPS 1
-#else
-#define FONT_HAVE_RWOPS 0
-#endif
-
 #ifndef SDL_TTF_VERSION_ATLEAST
 #define SDL_TTF_COMPILEDVERSION \
     SDL_VERSIONNUM(SDL_TTF_MAJOR_VERSION, SDL_TTF_MINOR_VERSION, SDL_TTF_PATCHLEVEL)
@@ -759,7 +752,6 @@ font_init(PyFontObject *self, PyObject *args, PyObject *kwds)
     }
     filename = Bytes_AS_STRING(oencoded);
 
-#if FONT_HAVE_RWOPS
     /* Try opening the path through RWops first */
     if (filename) {
         rw = SDL_RWFromFile(filename, "rb");
@@ -784,7 +776,6 @@ font_init(PyFontObject *self, PyObject *args, PyObject *kwds)
         if (font != NULL)
             goto success;
     }
-#endif
 
     if (font == NULL) {
         /*check if it is a valid file, else SDL_ttf segfaults*/
@@ -835,7 +826,6 @@ font_init(PyFontObject *self, PyObject *args, PyObject *kwds)
 
 fileobject:
     if (font == NULL) {
-#if FONT_HAVE_RWOPS
         rw = pgRWops_FromFileObject(obj);
 
         if (rw == NULL) {
@@ -845,11 +835,6 @@ fileobject:
         Py_BEGIN_ALLOW_THREADS;
         font = TTF_OpenFontIndexRW(rw, 1, fontsize, 0);
         Py_END_ALLOW_THREADS;
-#else
-        PyErr_SetString(PyExc_NotImplementedError,
-                        "nonstring fonts require SDL_ttf-2.0.6");
-        goto error;
-#endif
     }
 
     if (font == NULL) {
