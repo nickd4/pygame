@@ -38,8 +38,9 @@
 #include "structmember.h"
 
 #ifndef SDL_TTF_VERSION_ATLEAST
-#define SDL_TTF_COMPILEDVERSION \
-    SDL_VERSIONNUM(SDL_TTF_MAJOR_VERSION, SDL_TTF_MINOR_VERSION, SDL_TTF_PATCHLEVEL)
+#define SDL_TTF_COMPILEDVERSION                                  \
+    SDL_VERSIONNUM(SDL_TTF_MAJOR_VERSION, SDL_TTF_MINOR_VERSION, \
+                   SDL_TTF_PATCHLEVEL)
 #define SDL_TTF_VERSION_ATLEAST(X, Y, Z) \
     (SDL_TTF_COMPILEDVERSION >= SDL_VERSIONNUM(X, Y, Z))
 #endif
@@ -665,7 +666,7 @@ font_dealloc(PyFontObject *self)
         if (self->ttf_init_generation != current_ttf_generation) {
             // Since TTF_Font is a private structure
             // it's impossible to access face field in a common way.
-            int** face_pp = font;
+            int **face_pp = font;
             *face_pp = NULL;
         }
         TTF_CloseFont(font);
@@ -722,23 +723,27 @@ font_init(PyFontObject *self, PyObject *args, PyObject *kwds)
     rw = pgRWops_FromObject(obj);
 
     if (rw == NULL && PyUnicode_Check(obj)) {
-        PyObject* font_defaultname_string = PyUnicode_FromString(font_defaultname);
+        PyObject *font_defaultname_string =
+            PyUnicode_FromString(font_defaultname);
         if (!PyUnicode_Compare(font_defaultname_string, obj)) {
-            /* clear out existing file loading error before attempt to get default font */
+            /* clear out existing file loading error before attempt to get
+             * default font */
             PyErr_Clear();
             Py_DECREF(obj);
             obj = font_resource(font_defaultname);
             if (obj == NULL) {
                 if (PyErr_Occurred() == NULL) {
                     PyErr_Format(PyExc_RuntimeError,
-                                "default font '%.1024s' not found",
-                                font_defaultname);
+                                 "default font '%.1024s' not found",
+                                 font_defaultname);
                 }
                 goto error;
             }
-            /* Unlike when the default font is loaded with None, the fontsize is not
-             * scaled down here. This was probably unintended implementation detail,
-             * but this rewritten code aims to keep the exact behavior as the old one */
+            /* Unlike when the default font is loaded with None, the fontsize
+             * is not scaled down here. This was probably unintended
+             * implementation detail,
+             * but this rewritten code aims to keep the exact behavior as the
+             * old one */
 
             rw = pgRWops_FromObject(obj);
         }
