@@ -21,8 +21,7 @@ def scale(
 ) -> Surface: ...
 def scale_by(
     surface: Surface,
-    scale: float,
-    scale_y: Optional[float] = None,
+    factor: Union[float, Sequence[float]],
     dest_surface: Optional[Surface] = None,
 ) -> Surface: ...
 def rotate(surface: Surface, angle: float) -> Surface: ...
@@ -35,8 +34,7 @@ def smoothscale(
 ) -> Surface: ...
 def smoothscale_by(
     surface: Surface,
-    scale: float,
-    scale_y: Optional[float] = None,
+    factor: Union[float, Sequence[float]],
     dest_surface: Optional[Surface] = None,
 ) -> Surface: ...
 def get_smoothscale_backend() -> str: ...
