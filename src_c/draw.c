@@ -866,9 +866,8 @@ polygon(PyObject *self, PyObject *arg, PyObject *kwargs)
 static PyObject *
 rect(PyObject *self, PyObject *args, PyObject *kwargs)
 {
-    pgSurfaceObject *surfobj = NULL;
-    PyObject *colorobj = NULL, *rectobj = NULL;
-    PyObject *points = NULL, *poly_args = NULL, *ret = NULL;
+    pgSurfaceObject *surfobj;
+    PyObject *colorobj, *rectobj;
     SDL_Rect *rect = NULL, temp;
     SDL_Surface *surf = NULL;
     Uint8 rgba[4];
